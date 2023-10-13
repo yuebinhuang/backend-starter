@@ -10,11 +10,16 @@ export interface ProfileDoc extends BaseDoc {
     content: ContentT;
 }
 
+// TODO: need to change viewer so that its not undefined and check for connections
+
 export default class ProfileConcept {
 
     public readonly profiles = new DocCollection<ProfileDoc>("profiles");
 
     async getProfile(owner: ObjectId, viewer: ObjectId | undefined) {
+        if (owner.toString() === viewer?.toString()) {
+            viewer = undefined;
+        }
         const profile = await this.profiles.readOne( {owner, viewer} );
         if (profile === null) {
             throw new NotFoundError(`Profile not found!`);

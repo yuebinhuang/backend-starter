@@ -2,11 +2,12 @@ import { ObjectId } from "mongodb";
 
 import { Router, getExpressRouter } from "./framework/router";
 
-import { Friend, Post, User, WebSession } from "./app";
+import { Friend, Post, User, WebSession, Profile, Circle } from "./app";
 import { PostDoc, PostOptions } from "./concepts/post";
 import { UserDoc } from "./concepts/user";
 import { WebSessionDoc } from "./concepts/websession";
 import Responses from "./responses";
+import { ContentT } from "./types";
 
 class Routes {
   @Router.get("/session")
@@ -135,6 +136,19 @@ class Routes {
     const user = WebSession.getUser(session);
     const fromId = (await User.getUserByUsername(from))._id;
     return await Friend.rejectRequest(fromId, user);
+  }
+
+  @Router.get("/profile:owner")
+  async getProfile(session: WebSessionDoc, owner: ObjectId) {
+    const viewer = WebSession.getUser(session);
+    return await Profile.getProfile(owner, viewer);
+  }
+
+  @Router.put("/profile/update/info?name=name&content=content")
+  async updateProfile(session: WebSessionDoc, name: string, content: ContentT) {
+    const user = WebSession.getUser(session);
+    return await Profile.updateProfile(user, name, content);
+    
   }
 }
 
