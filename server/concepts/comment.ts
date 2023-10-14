@@ -24,6 +24,24 @@ export default class CommentConcept {
         return {msg: "Comment deleted!"};
     }
 
+    async getAuthor(_id: ObjectId) {
+        const comment = await this.comments.readOne({ _id });
+        if (!comment) {
+          throw new NotFoundError(`Comment ${_id} does not exist!`);
+        }
+        return comment.author;
+    }
+    
+    async isAuthor(user: ObjectId, _id: ObjectId) {
+        const comment = await this.comments.readOne({ _id });
+        if (!comment) {
+          throw new NotFoundError(`Comment ${_id} does not exist!`);
+        }
+        if (comment.author.toString() ! == user.toString()) {
+          throw new NotAllowedError("not author of comment");
+        }
+    }
+
     async getComments(post: ObjectId) {
         const comments = await this.comments.readMany({post: post});
         return comments;

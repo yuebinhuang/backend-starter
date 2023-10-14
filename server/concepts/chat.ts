@@ -13,19 +13,23 @@ export default class ChatConcept {
 
     public readonly chats = new DocCollection<ChatDoc>("chats");
 
-    async getChat(_id: ObjectId){
-        const chat = await this.chats.readOne( {_id} );
+    async getChat(sender: ObjectId, receiver: ObjectId){
+        const chat = await this.chats.readOne({ $or: [{user1: sender, user2: receiver}, {user1: receiver, user2: sender}] });
         if (chat === null) {
             throw new NotFoundError(`Chat not found!`);
         }
         return chat;
     }
 
+    async createChat(sender: ObjectId, receiver: ObjectId, content: ContentT) {
+        const _id = await this.chats.createOne( {user1: sender, user2: receiver, content: [[sender, content]]} );
+        return { msg: "Chat started successfully!" };
+    }
+
     async sendMessage(sender: ObjectId, receiver: ObjectId, content: ContentT) {
         const chat = await this.chats.readOne({ $or: [{user1: sender, user2: receiver}, {user1: receiver, user2: sender}] });
         if (chat === null) {
-            const _id = await this.chats.createOne( {user1: sender, user2: receiver, content: [[sender, content]]} );
-            return { msg: "Chat started successfully!" };
+            throw new NotFoundError("Chat not found!");
         } else {
             chat.content.push([sender, content]);
             const update: Partial<ChatDoc> = { content: chat.content };

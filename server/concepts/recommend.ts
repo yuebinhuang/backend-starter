@@ -21,6 +21,11 @@ export default class RecommendConcept {
         return rec;
     }
 
+    async getRecsbyTarget(user: ObjectId) {
+        const recs = await this.recs.readMany({user});
+        return recs;
+    }
+
     async recommend(recommender: ObjectId, post: ObjectId, target: ObjectId) {
         const rec = await this.recs.readOne({recommender, post, target});
         if (rec === null) {
@@ -34,6 +39,16 @@ export default class RecommendConcept {
     async removeRec(_id: ObjectId) {
         await this.recs.deleteOne({ _id });
         return { msg: "Recommendation removed successfully!" };
+    }
+
+    async isRecommender(user: ObjectId, _id: ObjectId) {
+        const rec = await this.recs.readOne({ _id });
+        if (!rec) {
+          throw new NotFoundError(`Recommendation ${_id} does not exist!`);
+        }
+        if (rec.recommender.toString() ! == user.toString()) {
+          throw new NotAllowedError("not recommender of rec");
+        }
     }
 
 }

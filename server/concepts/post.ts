@@ -2,6 +2,7 @@ import { Filter, ObjectId } from "mongodb";
 
 import DocCollection, { BaseDoc } from "../framework/doc";
 import { NotAllowedError, NotFoundError } from "./errors";
+import { ContentT } from "../types";
 
 export interface PostOptions {
   backgroundColor?: string;
@@ -9,15 +10,16 @@ export interface PostOptions {
 
 export interface PostDoc extends BaseDoc {
   author: ObjectId;
-  content: string;
+  content: ContentT;
+  viewers: Set<ObjectId>
   options?: PostOptions;
 }
 
 export default class PostConcept {
   public readonly posts = new DocCollection<PostDoc>("posts");
 
-  async create(author: ObjectId, content: string, options?: PostOptions) {
-    const _id = await this.posts.createOne({ author, content, options });
+  async create(author: ObjectId, content: ContentT, viewers: Set<ObjectId>, options?: PostOptions) {
+    const _id = await this.posts.createOne({ author, content, viewers, options });
     return { msg: "Post successfully created!", post: await this.posts.readOne({ _id }) };
   }
 
@@ -30,6 +32,32 @@ export default class PostConcept {
 
   async getByAuthor(author: ObjectId) {
     return await this.getPosts({ author });
+  }
+  
+  async getPost(_id: ObjectId) {
+    const post = await this.posts.readOne({ _id });
+    if (!post) {
+      throw new NotFoundError(`Post ${_id} does not exist!`);
+    }
+    return post;
+  }
+
+  async getAuthor(_id: ObjectId) {
+    const post = await this.posts.readOne({ _id });
+    if (!post) {
+      throw new NotFoundError(`Post ${_id} does not exist!`);
+    }
+    return post.author;
+  }
+
+  async changeViewers(_id: ObjectId, viewers: Set<ObjectId>) {
+    const post = await this.posts.readOne( {_id} );
+    if (post === null) {
+        throw new NotFoundError(`Post not found!`);
+    } else {
+        const update: Partial<PostDoc> = { viewers: viewers };
+        await this.posts.updateOne({ _id}, update);
+    }
   }
 
   async update(_id: ObjectId, update: Partial<PostDoc>) {

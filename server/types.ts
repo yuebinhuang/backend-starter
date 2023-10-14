@@ -1,9 +1,7 @@
 
 
-export class ContentT {
-
+export type ContentT = {
+    text: string;
 }
 
-export enum ActionT {
-    
-}
+export type ActionT = "Chat" | "ViewPost" | "ViewPostComments" | "Comment" | "ViewFeed" | "Recommend";

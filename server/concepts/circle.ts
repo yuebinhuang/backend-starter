@@ -24,12 +24,37 @@ export default class CircleConcept {
         return { msg: "Post deleted successfully!" };
     }
 
+    async findFriend(user: ObjectId, friend: ObjectId) {
+        const circles = await this.getCirclesByUser(user);
+        for (const circle of circles) {
+            if (circle.members.has(friend)) {
+                return circle;
+            }
+        }
+        return undefined;
+    }
+
+    async hasAction(user: ObjectId, friend: ObjectId, action: ActionT) {
+        const circle = await this.findFriend(user, friend);
+        if (circle !== undefined) {
+            if (circle.actions.has(action)) {
+                return true;
+            }
+        }
+        throw new NotAllowedError(`Action ${action} not allowed!`);
+    }
+
     async addToCircle(_id: ObjectId, member: ObjectId) {
         const circle = await this.circles.readOne({ _id });
         if (circle) {
             const members = circle.members;
             if (members.has(member)) {
                 throw new Error(`Circle ${circle} already has member ${member}`);
+            } 
+            // if member in another circle, remove it from that circle
+            const currentCircle = await this.findFriend(circle.creator, member);
+            if (currentCircle !== undefined) {
+                this.removeFromCircle(currentCircle._id, member)
             }
             members.add(member);
             const update: Partial<CircleDoc> = { members: members };
@@ -73,6 +98,21 @@ export default class CircleConcept {
             throw new NotFoundError(`Circle not found!`);
         }
         return circle;
+    }
+
+    async getCirclesByUser(user: ObjectId) {
+        const circles = await this.circles.readMany( {creator: user} );
+        return circles
+    }
+
+    async isCreator(user: ObjectId, _id: ObjectId) {
+        const circle = await this.circles.readOne({ _id });
+        if (!circle) {
+          throw new NotFoundError(`Circle ${_id} does not exist!`);
+        }
+        if (circle.creator.toString() ! == user.toString()) {
+          throw new NotAllowedError("not creator of circle");
+        }
     }
 
 }
