@@ -218,7 +218,7 @@ class Routes {
     return await Circle.changeActions(_id, actions);
   }
 
-  @Router.get("/chat/:_id")
+  @Router.get("/chat/:receiver")
   async getChat(session: WebSessionDoc, receiver: ObjectId) {
     const user = WebSession.getUser(session);
     return await Chat.getChat(user, receiver);
@@ -263,10 +263,9 @@ class Routes {
     return await Comment.delComment(_id);
   }
 
-  @Router.get("/feed/:feedId")
-  async getFeed(session: WebSessionDoc, feedId: ObjectId) {
+  @Router.get("/feed/:owner")
+  async getFeed(session: WebSessionDoc, owner: ObjectId) {
     const viewer = WebSession.getUser(session);
-    const owner = await Feed.getOwner(feedId);
     if (viewer.toString() === owner.toString()) {
       return await Feed.getFeed(owner);
     }
@@ -275,7 +274,7 @@ class Routes {
   }
 
   @Router.post("/feed/create")
-  async createFeed(session: WebSessionDoc, timestamp: Date) {
+  async createFeed(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const viewers: Set<ObjectId> = new Set();
     const posts: ObjectId[] = [];
@@ -290,11 +289,11 @@ class Routes {
         viewers.add(friend);
       }
     }
-    return await Feed.createFeed(user, viewers, posts, timestamp);
+    return await Feed.createFeed(user, viewers, posts, new Date());
   }
 
   @Router.patch("/feed/update")
-  async updateFeed(session: WebSessionDoc, timestamp: Date) {
+  async updateFeed(session: WebSessionDoc) {
     const user = WebSession.getUser(session);
     const posts: ObjectId[] = [];
     for (const friend of await Friend.getFriends(user)) {
@@ -304,7 +303,7 @@ class Routes {
         posts.concat(friendPosts.map(post => post._id));
       }
     }
-    return await Feed.updateFeed(user, posts, timestamp);
+    return await Feed.updateFeed(user, posts, new Date());
   }
 
   @Router.patch("/feed/changeViewers")

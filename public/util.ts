@@ -77,6 +77,196 @@ const operations: operation[] = [
     method: "DELETE",
     fields: { id: "input" },
   },
+  {
+    name: "Get Friends",
+    endpoint: "/api/friends",
+    method: "GET",
+    fields: { }
+  },
+  {
+    name: "Remove Friend",
+    endpoint: "/api/friends/:friend",
+    method: "DELETE",
+    fields: { friend: "input" }
+  },
+  {
+    name: "Send Friend Request",
+    endpoint: "/api/friend/requests/:to",
+    method: "POST",
+    fields: { to: "input" }
+  },
+  {
+    name: "Remove Friend Request",
+    endpoint: "/api/friend/requests/:to",
+    method: "DELETE",
+    fields: { to: "input" }
+  },
+  {
+    name: "Accept Friend Request",
+    endpoint: "/api/friend/accept/:from",
+    method: "PUT",
+    fields: { from: "input" }
+  },
+  {
+    name: "Reject Friend Request",
+    endpoint: "/api/friend/reject/:from",
+    method: "PUT",
+    fields: { from: "input" }
+  },
+  {
+    name: "Get Friend Requests",
+    endpoint: "/api/friend/requests",
+    method: "GET",
+    fields: { }
+  },
+  {
+    name: "Get Profile",
+    endpoint: "/api/profile/:owner",
+    method: "GET",
+    fields: { owner: "input" }
+  },
+  {
+    name: "Create Profile",
+    endpoint: "/api/profile/create",
+    method: "POST",
+    fields: { name: "input", content: "textarea" }
+  },
+  {
+    name: "Update Profile",
+    endpoint: "/api/profile/update/:id",
+    method: "PATCH",
+    fields: { id: "input", name: "input", content: "textarea" }
+  },
+  {
+    name: "Create Profile View",
+    endpoint: "/api/profile/create_view",
+    method: "POST",
+    fields: { user: "input", name: "input" }
+  },
+  {
+    name: "Change Profile View",
+    endpoint: "/api/profile/change_view/:id",
+    method: "PATCH",
+    fields: { id: "input", name: "input" }
+  },
+  {
+    name: "Create Circle",
+    endpoint: "/api/circle/create",
+    method: "POST",
+    fields: { name: "input", members: "textarea", actions: "textarea" }
+  },
+  {
+    name: "Delete Circle",
+    endpoint: "/api/circle/delete/:id",
+    method: "DELETE",
+    fields: { id: "input" }
+  },
+  {
+    name: "Get Circles",
+    endpoint: "/api/circles",
+    method: "GET",
+    fields: { }
+  },
+  {
+    name: "Add Member to Circle",
+    endpoint: "/api/circle/add/:id",
+    method: "PATCH",
+    fields: { id: "input", member: "input" }
+  },
+  {
+    name: "Remove Member from Circle",
+    endpoint: "/api/circle/remove/:id",
+    method: "PATCH",
+    fields: { id: "input", member: "input" }
+  },
+  {
+    name: "Change Circle Actions",
+    endpoint: "/api/circle/change/:id",
+    method: "PATCH",
+    fields: { id: "input", actions: "textarea" }
+  },
+  {
+    name: "Get Chat",
+    endpoint: "/api/chat/:receiver",
+    method: "GET",
+    fields: { receiver: "input" }
+  },
+  {
+    name: "Create Chat",
+    endpoint: "/api/chat/create",
+    method: "POST",
+    fields: { receiver: "input", content: "textarea" }
+  },
+  {
+    name: "Send Message",
+    endpoint: "/api/chat/send/:receiver",
+    method: "PATCH",
+    fields: { receiver: "input", content: "textarea" }
+  },
+  {
+    name: "Get Comments",
+    endpoint: "/api/comments/:post",
+    method: "GET",
+    fields: { post: "input" }
+  },
+  {
+    name: "Create Comment",
+    endpoint: "/api/comment/create",
+    method: "POST",
+    fields: { post: "input", viewers: "input", message: "input" }
+  },
+  {
+    name: "Delete Comment",
+    endpoint: "/api/comment/delete/:id",
+    method: "DELETE",
+    fields: { id: "input" }
+  },
+  {
+    name: "Get Feed",
+    endpoint: "/api/feed/:owner",
+    method: "GET",
+    fields: { owner: "input" }
+  },
+  {
+    name: "Create Feed",
+    endpoint: "/api/feed/create",
+    method: "POST",
+    fields: { }
+  },
+  {
+    name: "Update Feed",
+    endpoint: "/api/feed/update",
+    method: "PATCH",
+    fields: { }
+  },
+  {
+    name: "Change Feed Viewers",
+    endpoint: "/api/feed/changeViewers",
+    method: "PATCH",
+    fields: { viewers: "textarea" }
+  },
+  {
+    name: "Get Recommendations",
+    endpoint: "/api/recommends",
+    method: "GET",
+    fields: { }
+  },
+  {
+    name: "Create Recommendation",
+    endpoint: "/api/recommend/create/:post/:target",
+    method: "POST",
+    fields: { post: "input", target: "input" }
+  },
+  {
+    name: "Remove Recommendation",
+    endpoint: "/api/recommend/delete/:id",
+    method: "DELETE",
+    fields: { id: "input" }
+  }
+  
+  // You can now use the 'routes' array to access each route configuration as needed.
+  
+  
 ];
 
 // Do not edit below here.
